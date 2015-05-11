@@ -1,0 +1,8 @@
+#ifndef CTYPE_CPP_H
+#define CTYPE_CPP_H
+
+/* Will be used in C++ include */
+#include <ctype.h>
+
+
+#endif /* CTYPE_CPP_H */

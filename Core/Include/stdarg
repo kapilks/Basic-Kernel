@@ -1,0 +1,8 @@
+#ifndef STDARG_CPP_H
+#define STDARG_CPP_H
+
+/* Will be used in C++ include */
+#include <stdarg.h>
+
+
+#endif /* STDARG_CPP_H */

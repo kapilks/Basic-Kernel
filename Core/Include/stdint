@@ -1,0 +1,8 @@
+#ifndef STDINT_CPP_H
+#define STDINT_CPP_H
+
+/* Will be used in C++ include */
+#include <stdint.h>
+
+
+#endif /* STDINT_CPP_H */
