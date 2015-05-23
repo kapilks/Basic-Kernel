@@ -2,10 +2,10 @@
 #define STDINT_H
 
 
-//
+//************************
 // Standard integer data-type
 // File: stdint.h
-//
+//************************
 
 
 /* Exact width integer type */

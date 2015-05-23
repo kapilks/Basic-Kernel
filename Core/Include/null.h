@@ -2,10 +2,10 @@
 #define NULL_H
 
 
-//
+//************************
 // Standard NULL declaration 
 // File: null.h
-//
+//************************
 
 
 /* Undefine NULL if it is already defined by stdlib */

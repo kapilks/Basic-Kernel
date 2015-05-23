@@ -11,7 +11,7 @@ CPPFLAG 	= -c -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -I$(INC
 ARFLAG		= -vrcs
 
 
-OBJ			= string.o
+OBJ			= string.o stdio.o
 
 
 all: libstd.a
@@ -22,5 +22,10 @@ libstd.a: $(OBJ)
 	
 string.o: string.c
 	$(CCOM) string.c -o string.o $(CFLAG) 
-	
+
+stdio.o: stdio.c
+	$(CCOM) stdio.c -o stdio.o $(CFLAG)
+
 string.c: $(INC)/string.h
+
+stdio.c: $(INC)/stdio.h $(INC)/va_list.h $(INC)/stdarg.h $(INC)/string.h

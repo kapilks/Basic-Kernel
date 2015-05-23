@@ -2,11 +2,11 @@
 #define CTYPE_H
 
 
-//
+//************************
 // Header for determining type and their details
 // of the character of string
 // File: ctype.h
-//
+//************************
 
 
 #ifdef __cplusplus

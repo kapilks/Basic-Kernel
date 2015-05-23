@@ -2,10 +2,10 @@
 #define SIZE_H
 
 
-//
+//************************
 // Standard size declaration
 // File: size.h
-//
+//************************
 
 
 #include <stdint.h>

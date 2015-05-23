@@ -2,10 +2,10 @@
 #define STDARG_H
 
 
-//
+//************************
 // Defines macros for using in variable lenght arguments
 // File: stdarg.h
-//
+//************************
 
 
 #include <va_list.h>
@@ -26,12 +26,12 @@ extern "C"
 /* &(LASTARG) Points to the LEFTMOST argument of the function call (before the ...) */
 /* AP - argument pointer */
 /* LASTARG - last argument */
-#define	vaStart(AP, LASTARG) (AP=((va_list) &(LASTARG) + VA_SIZE(LASTARG)))
+#define	va_start(AP, LASTARG) (AP=((va_list) &(LASTARG) + VA_SIZE(LASTARG)))
 
 /* nothing for vaEnd */
-#define vaEnd(AP)
+#define va_end(AP)
 
-#define vaArg(AP, TYPE)	(AP += VA_SIZE(TYPE), *((TYPE *)(AP - VA_SIZE(TYPE))))
+#define va_arg(AP, TYPE)	(AP += VA_SIZE(TYPE), *((TYPE *)(AP - VA_SIZE(TYPE))))
 
 
 #ifdef __cplusplus
