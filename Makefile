@@ -1,6 +1,7 @@
 SRC 		= Core
 BIN 		= Binary
 INC			= Include
+KER 		= Kernel
 LIB			= $(SRC)/Library
 
 
@@ -23,23 +24,23 @@ all: $(KERNEL)
 
 
 # Linking all object to kernel
-$(KERNEL): $(OBJECT)
-	$(CCOM) -T $(SRC)/linker.ld -o $(KERNEL) -ffreestanding -O2 -nostdlib $(OBJECT) -lgcc -L$(LIB) -lstd
+$(KERNEL): $(OBJECT) $(LIB)/libstd.a
+	$(CCOM) -T $(SRC)/$(KER)/linker.ld -o $(KERNEL) -ffreestanding -O2 -nostdlib $(OBJECT) -lgcc -L$(LIB) -lstd
 
 
 # Compiling and assembling source files
-$(BIN)/loader.o: $(SRC)/loader.s
-	$(AS) $(SRC)/loader.s -o $(BIN)/loader.o
+$(BIN)/loader.o: $(SRC)/$(KER)/loader.s
+	$(AS) $(SRC)/$(KER)/loader.s -o $(BIN)/loader.o
 
-$(BIN)/kernel.o: $(SRC)/kernel.c
-	$(CCOM) $(SRC)/kernel.c -o $(BIN)/kernel.o $(CFLAG)
+$(BIN)/kernel.o: $(SRC)/$(KER)/kernel.c
+	$(CCOM) $(SRC)/$(KER)/kernel.c -o $(BIN)/kernel.o $(CFLAG)
 
-$(BIN)/console.o: $(SRC)/console.c $(SRC)/console.h
-	$(CCOM) $(SRC)/console.c -o $(BIN)/console.o $(CFLAG)
+$(BIN)/console.o: $(SRC)/$(KER)/console.c $(SRC)/$(KER)/console.h
+	$(CCOM) $(SRC)/$(KER)/console.c -o $(BIN)/console.o $(CFLAG)
 
 
 
-$(SRC)/kernel.c: $(SRC)/$(INC)/null.h $(SRC)/console.h
+$(SRC)/$(KER)/kernel.c: $(SRC)/$(INC)/null.h $(SRC)/$(KER)/console.h
 
 # Generating iso image of OS
 iso: os.iso
