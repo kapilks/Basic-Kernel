@@ -8,15 +8,22 @@
 #error "This tutorial needs to be compiled with a ix86-elf compiler"
 #endif
 
+#define ARCH_x86
 
 #include "console.h" /* Included here so no other file include it, directly use print */
 #include <stdio.h>
 #include <string.h>
-
+#include <hal.h>				// For generating interrupts
 
 void usefullStuff()
 {
-	perror("%s Singh", "Kapil");
+	initializeHal();
+
+	genInterrupt(0);
+	genInterrupt(7);
+
+	initializeHal();
+
 }
 
 

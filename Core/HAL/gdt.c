@@ -1,7 +1,9 @@
+#define ARCH_x86
+
 #include "gdt.h"
 
 #include <string.h>
-
+#include <null.h>
 
 /* Extracting bit (All 1) */
 #define LEAST_32_BITS				0xffffffff
@@ -12,7 +14,7 @@
 struct GDTR
 {
 	uint16 limit;					// Size of GDT - 1 bytes
-	uiny32 base;					// Linear address of first entry of GDT
+	uint32 base;					// Linear address of first entry of GDT
 }__attribute__((__packed__));
 
 
@@ -34,7 +36,7 @@ static void loadGdt()
 {
 	asm
 	(
-		"lgdt 	[%0]"
+		"lgdt 	%0"
 		:
 		: [input] "g" (gdtr)
 		:
@@ -57,22 +59,22 @@ void gdtPutDescriptor(uint32 index, uint32 base, uint32 limit, uint16 flags)
 	memset((void*)&gdt[index], 0, sizeof(struct GDTDescriptor));
 
 	// Set limit and base address
-	gdt[index].baseLow 		= uint16(base & LEAST_16_BITS);
-	gdt[index].baseMid 		= uint8((base >> 16) & LEAST_8_BITS);
-	gdt[index].baseHigh 	= uint8((base >> 24) & LEAST_8_BITS);
-	gdt[index].limit 		= uint16(limit & LEAST_16_BITS);
+	gdt[index].baseLow 		= (uint16)(base & LEAST_16_BITS);
+	gdt[index].baseMid 		= (uint8)((base >> 16) & LEAST_8_BITS);
+	gdt[index].baseHigh 	= (uint8)((base >> 24) & LEAST_8_BITS);
+	gdt[index].limit 		= (uint16)(limit & LEAST_16_BITS);
 
 	// Add limit first 4 bits to flag starting at 5th bit
-	flag |= uint16((limit >> 16) << 8);
+	flags |= (uint16)((limit >> 16) << 8);
 
 	// Set flag
-	gdt[index].flag = flags;
+	gdt[index].flags = flags;
 }
 
 
 struct GDTDescriptor* gdtGetDesciptor(uint32 index)
 {
-	if(i >= I86_MAX_GDT_DESCRIPTOR)
+	if(index >= I86_MAX_GDT_DESCRIPTOR)
 	{
 		return NULL;
 	}
@@ -85,10 +87,10 @@ int32 initializeGdt()
 {
 	// Set up gdtr
 	gdtr.limit 	= sizeof(struct GDTDescriptor) * I86_MAX_GDT_DESCRIPTOR - 1;
-	gdtr.base 	= uint32(&gdt[0]);
+	gdtr.base 	= (uint32)(&gdt[0]);
 
 	// Set null descriptor
-	gdtPutDescriptor(0, 0, 0, 0, 0);
+	gdtPutDescriptor(0, 0, 0, 0);
 
 	// Set default code descriptor
 	gdtPutDescriptor(1, 0, LEAST_32_BITS,

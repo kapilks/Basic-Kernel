@@ -24,10 +24,10 @@
 /* Public Function */
 
 /* Initialize HAL specific implimentation */
-int halInitialize();
+int initializeHal();
 
 /* Shutdown HAL */
-int halShutdown();
+int shutdownHal();
 
 /* Generate Software interrupt */
 // interrupt is index in IDT

@@ -9,10 +9,20 @@
 #include "cpu.h"
 #include "idt.h"
 
+void zero_int()
+{
+	//__asm__("pushad");
+
+	perror("Error: divide by zero\n");
+
+	//__asm__("popad; leave; iret;");
+}
 
 int initializeHal()
 {
 	initializeProcessor();
+
+	putInterruptHandler(0, I86_IDT_DESC_PRESENT | I86_IDT_DESC_BIT32, 0x8, (InterruptHandler)zero_int);
 	return 0;
 }
 
@@ -26,13 +36,14 @@ int shutdownHal()
 
 void genInterrupt(uint32 interrupt)
 {
+	uint16 opcode = 0;
 	asm
 	(
-		"mov 	byte ptr[%0], 	%%al\n\t"
-		"mov 	%%al, 			byte ptr[genInt + 1]\n\t"
+		"movb 	%0, 	%%al\n\t"
+		"movb 	%%al, 	genInt + 1\n\t"
 		"jmp 	genInt\n\t"
 		"genInt:\n\t"
-		"int 	0\n\t"
+		"int 	$0\n\t"
 		:
 		: [input] "g" (interrupt)
 		: "%al"

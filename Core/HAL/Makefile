@@ -25,7 +25,7 @@ cpu.c: cpu.h gdt.h idt.h
 
 cpu.h: reg.h $(INC)/stdint.h
 
-gdt.c: gdt.h $(INC)/string.h
+gdt.c: gdt.h $(INC)/string.h $(INC)/null.h
 
 gdt.h: $(INC)/stdint.h
 
@@ -33,7 +33,7 @@ hal.c: $(INC)/hal.h cpu.h idt.h
 
 $(INC)/hal.h: $(INC)/stdint.h
 
-idt.c: idt.h $(INC)/string.h $(INC)/hal.h
+idt.c: idt.h $(INC)/string.h $(INC)/hal.h $(INC)/stdio.h $(INC)/null.h
 
 idt.h: $(INC)/stdint.h
 

@@ -24,9 +24,11 @@ all: $(KERNEL)
 
 
 # Linking all object to kernel
-$(KERNEL): $(OBJECT) $(LIB)/libstd.a
-	$(CCOM) -T $(SRC)/$(KER)/linker.ld -o $(KERNEL) -ffreestanding -O2 -nostdlib $(OBJECT) -lgcc -L$(LIB) -lstd
+$(KERNEL): $(OBJECT) $(LIB)/libstd.a $(LIB)/libhal.a
+	$(CCOM) -T $(SRC)/$(KER)/linker.ld -o $(KERNEL) -ffreestanding -O2 -nostdlib $(OBJECT) -lgcc -L$(LIB) -lhal -lstd
 
+$(LIB)/libhal.a: $(SRC)/HAL/libhal.a
+	cp $(SRC)/HAL/libhal.a $(LIB)/libhal.a
 
 # Compiling and assembling source files
 $(BIN)/loader.o: $(SRC)/$(KER)/loader.s
@@ -40,7 +42,7 @@ $(BIN)/console.o: $(SRC)/$(KER)/console.c $(SRC)/$(KER)/console.h
 
 
 
-$(SRC)/$(KER)/kernel.c: $(SRC)/$(INC)/null.h $(SRC)/$(KER)/console.h
+$(SRC)/$(KER)/kernel.c: $(SRC)/$(INC)/null.h $(SRC)/$(KER)/console.h $(SRC)/$(INC)/hal.h
 
 # Generating iso image of OS
 iso: os.iso
