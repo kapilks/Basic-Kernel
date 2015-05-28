@@ -1,68 +1,90 @@
-SRC 		= Core
-BIN 		= Binary
-INC			= Include
-KER 		= Kernel
-LIB			= $(SRC)/Library
+# Usefull directories
+LIB_DIR			= 	./core/lib
+KER_DIR			= 	./core/kernel
+HAL_DIR 		=	./core/hal
 
 
-KNAME 		= myos.bin
-KERNEL 		= $(BIN)/$(KNAME)
-
-CCOM 		= Compiler/bin/i686-elf-gcc
-CPPCOM 		= Compiler/bin/i686-elf-g++
-AS 			= Compiler/bin/i686-elf-as
-
-CFLAG   	= -c -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I$(SRC)/$(INC) -L$(LIB)
-CPPFLAG 	= -c -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -I$(SRC)/$(INC) -L$(LIB)
-
-OBJECT 		= $(BIN)/loader.o $(BIN)/kernel.o $(BIN)/console.o
-
-BOCHS 		= Bochs
-BCONFIG 	= bochsconfig.txt
-
-all: $(KERNEL)
+# Output files
+KNAME 			= myos.bin
+KERNEL 			= $(KER_DIR)/bin/$(KNAME)
+ISO 			= os32.iso
 
 
+# Tools for building
+CCOM 			= compiler/bin/i686-elf-gcc
+CPPCOM 			= compiler/bin/i686-elf-g++
+AS 				= compiler/bin/i686-elf-as
+
+
+# Flags for building tools
+CFLAG   		= -c -std=gnu99 -ffreestanding -O2 -Wall -Wextra -L$(LIB_DIR)
+CPPFLAG 		= -c -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -L$(LIB_DIR)
+
+
+# Libraries used
+LIB 			= -lhal -lstd
+
+
+# Object files
+_OBJ 			=	console.o kernel.o loader.o
+OBJ 			= 	$(_OBJ:%.o=$(KER_DIR)/obj/debug/%.o)
+
+
+# Linker file
+LD_FILE 		= ./core/kernel/linker.ld
+
+
+# Bochs emulator 
+BOCHS 			= bochs
+BCONFIG 		= bochsconfig.txt
+
+
+#--------------------------------------------------------------------------
 # Linking all object to kernel
-$(KERNEL): $(OBJECT) $(LIB)/libstd.a $(LIB)/libhal.a
-	$(CCOM) -T $(SRC)/$(KER)/linker.ld -o $(KERNEL) -ffreestanding -O2 -nostdlib $(OBJECT) -lgcc -L$(LIB) -lhal -lstd
+$(KERNEL): $(OBJ) $(LIB_DIR)/libhal.a $(LIB_DIR)/libstd.a
+	$(CCOM) -T $(LD_FILE) -o $(KERNEL) -ffreestanding -O2 -nostdlib $(OBJ) -lgcc -L$(LIB_DIR) $(LIB)
 
-$(LIB)/libhal.a: $(SRC)/HAL/libhal.a
-	cp $(SRC)/HAL/libhal.a $(LIB)/libhal.a
+$(LIB_DIR)/libhal.a: $(HAL_DIR)/libhal.a
+	cp $(HAL_DIR)/libhal.a $(LIB_DIR)/libhal.a
 
-# Compiling and assembling source files
-$(BIN)/loader.o: $(SRC)/$(KER)/loader.s
-	$(AS) $(SRC)/$(KER)/loader.s -o $(BIN)/loader.o
+#--------------------------------------------------------------------------
 
-$(BIN)/kernel.o: $(SRC)/$(KER)/kernel.c
-	$(CCOM) $(SRC)/$(KER)/kernel.c -o $(BIN)/kernel.o $(CFLAG)
+all: hal stdlib kernel $(KERNEL) 
 
-$(BIN)/console.o: $(SRC)/$(KER)/console.c $(SRC)/$(KER)/console.h
-	$(CCOM) $(SRC)/$(KER)/console.c -o $(BIN)/console.o $(CFLAG)
+#--------------------------------------------------------------------------
+# Building all modules
+
+# Building kernel
+kernel:
+	cd $(KER_DIR); make depend; make;
 
 
+# Building HAL
+hal:
+	cd $(HAL_DIR); make depend; make;
 
-$(SRC)/$(KER)/kernel.c: $(SRC)/$(INC)/null.h $(SRC)/$(KER)/console.h $(SRC)/$(INC)/hal.h
+
+# Building stdlib
+stdlib:
+	cd $(LIB_DIR); make depend; make;
+
+
+#-------------------------------------------------------------------------
+
 
 # Generating iso image of OS
-iso: os.iso
+iso: $(ISO)
 
-os.iso: $(KERNEL)
+
+$(ISO): $(KERNEL)
 	cp $(KERNEL) iso/boot/$(KNAME)
-	genisoimage -R -b boot/grub/stage2_eltorito -no-emul-boot -input-charset utf8 -boot-load-size 4 -boot-info-table -o os.iso iso
+	genisoimage -R -b boot/grub/stage2_eltorito -no-emul-boot -input-charset utf8 -boot-load-size 4 -boot-info-table -o $(ISO) iso
 
 
 # Running OS in bochs emulator
-run: os.iso
+run: $(ISO)
 	bochs -f $(BOCHS)/$(BCONFIG) -q
 
 # Delete all object files in Binary folder
 clean:
-	rm $(BIN)/*.o
-
-
-# Delete kernel and OS image also
-clean-all: clean
-	rm $(KERNEL) os.iso
-
-#Assembly files
+	rm $(KERNEL) $(ISO)

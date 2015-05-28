@@ -7,7 +7,7 @@ core/lib/obj
 experiment/
 iso/
 theory/
-os.iso
+*.iso
 *.depend
-*.a
-*.so
+core/lib/*.a
+core/lib/*.so
