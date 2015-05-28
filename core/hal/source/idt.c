@@ -1,6 +1,6 @@
 #define ARCH_x86
 
-#include "idt.h"
+#include <idt.h>
 
 #include <string.h>
 #include <hal.h>

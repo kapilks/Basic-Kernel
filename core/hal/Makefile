@@ -1,40 +1,63 @@
-LIBAR		= libhal.a
-INC			= ../Include
-
-CCOM 		= ../../Compiler/bin/i686-elf-gcc
-CPPCOM 		= ../../Compiler/bin/i686-elf-g++
-AS 			= ../../Compiler/bin/i686-elf-as
-AR			= ../../Compiler/bin/i686-elf-ar
-
-CFLAG   	= -c -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I$(INC)
-CPPFLAG 	= -c -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -I$(INC)
-ARFLAG		= -vrcs	
+# Output librabry file
+LIB_ARCH		= 	libhal.a
 
 
-OBJ			= hal.o gdt.o idt.o cpu.o
+# Usefull directories
+INC_DIR			= 	../include
+INC_HAL_DIR		= 	./include
+SRC_DIR			= 	./source
+D_OBJ_DIR		=	./obj/debug
+R_OBJ_DIR		=	./obj/release
 
-all: $(LIBAR)
 
-$(LIBAR): $(OBJ)
-	$(AR) $(ARFLAG) $(LIBAR) $(OBJ)
+# Tools for building
+CCOM 			= 	../../compiler/bin/i686-elf-gcc
+CPPCOM 			= 	../../compiler/bin/i686-elf-g++
+ASM 			= 	../../compiler/bin/i686-elf-as
+ARCH			= 	../../compiler/bin/i686-elf-ar
+MAKEDEPEND		= 	makedepend 
 
-%.o: %.c
+
+# Flags for building tools
+CFLAG   		= 	-c -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I$(INC_DIR) -I$(INC_HAL_DIR)
+CPPFLAG 		= 	-c -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -I$(INC_DIR) -I$(INC_HAL_DIR)
+ARFLAG			= 	-vrcs	
+
+
+_SOURCE			=	hal.c gdt.c idt.c cpu.c
+
+# Contain path to source files
+SRC_FILE 		=	$(_SOURCE:%.c=$(SRC_DIR)/%.c)
+
+# Output debug object file
+D_OBJ			=	$(_SOURCE:%.c=$(D_OBJ_DIR)/%.o)
+
+# Output release object file
+R_OBJ			=	$(_SOURCE:%.c=$(R_OBJ_DIR)/%.o)
+
+# Output dependency file
+DEP 			=	.depend
+
+#-------------------------------------------------------------------------
+
+lib: $(LIB_ARCH)
+
+$(LIB_ARCH): $(D_OBJ)
+	$(ARCH) $(ARFLAG) $(LIB_ARCH) $(D_OBJ)
+
+$(D_OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CCOM) $< -o $@ $(CFLAG)
 
-cpu.c: cpu.h gdt.h idt.h
 
-cpu.h: reg.h $(INC)/stdint.h
+# Include dependency files for object files
+include $(DEP)
 
-gdt.c: gdt.h $(INC)/string.h $(INC)/null.h
+# Clean object files
+clean:
+	rm $(D_OBJ_DIR)/*
+	rm $(LIB_ARCH)
 
-gdt.h: $(INC)/stdint.h
-
-hal.c: $(INC)/hal.h cpu.h idt.h
-
-$(INC)/hal.h: $(INC)/stdint.h
-
-idt.c: idt.h $(INC)/string.h $(INC)/hal.h $(INC)/stdio.h $(INC)/null.h
-
-idt.h: $(INC)/stdint.h
-
-reg.h: $(INC)/stdint.h
+# Generate dependency for course and output to DEP file
+depend:
+	$(MAKEDEPEND) -v -f$(DEP) -Y$(INC_DIR) -I$(INC_HAL_DIR) $(SRC_FILE)
+	rm $(DEP).bak

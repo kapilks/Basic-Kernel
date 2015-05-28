@@ -1,6 +1,6 @@
 #define ARCH_x86
 
-#include "gdt.h"
+#include <gdt.h>
 
 #include <string.h>
 #include <null.h>

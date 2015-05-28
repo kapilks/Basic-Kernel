@@ -16,7 +16,7 @@
 
 
 #include <stdint.h>
-#include "reg.h"
+#include <reg.h>
 
 
 /* Setup the processor idt, gdt */

@@ -8,3 +8,6 @@ experiment/
 iso/
 theory/
 os.iso
+*.depend
+*.a
+*.so

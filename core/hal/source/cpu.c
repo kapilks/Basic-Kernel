@@ -1,9 +1,9 @@
 #define ARCH_x86
 
 
-#include "cpu.h"
-#include "gdt.h"
-#include "idt.h"
+#include <cpu.h>
+#include <gdt.h>
+#include <idt.h>
 
 
 int32 initializeProcessor()

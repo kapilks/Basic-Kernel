@@ -6,8 +6,10 @@
 
 
 #include <hal.h>
-#include "cpu.h"
-#include "idt.h"
+#include <cpu.h>
+#include <idt.h>
+
+#include <stdio.h>
 
 void zero_int()
 {
