@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <va_list.h>
 
-#include <../Kernel/console.h>
+#include <../kernel/include/console.h>
 
 
 /////////////

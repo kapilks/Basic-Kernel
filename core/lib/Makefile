@@ -1,31 +1,61 @@
-LIBAR		= libstd.a
-INC			= ../Include
-
-CCOM 		= ../../Compiler/bin/i686-elf-gcc
-CPPCOM 		= ../../Compiler/bin/i686-elf-g++
-AS 			= ../../Compiler/bin/i686-elf-as
-AR			= ../../Compiler/bin/i686-elf-ar
-
-CFLAG   	= -c -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I$(INC)
-CPPFLAG 	= -c -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -I$(INC)
-ARFLAG		= -vrcs
+# Output librabry file
+LIB_ARCH		= 	libstd.a
 
 
-OBJ			= string.o stdio.o
+# Usefull directories
+INC_DIR			= 	../include
+SRC_DIR			= 	./source
+D_OBJ_DIR		=	./obj/debug
+R_OBJ_DIR		=	./obj/release
 
 
-all: libstd.a
+# Tools for building
+CCOM 			= 	../../compiler/bin/i686-elf-gcc
+CPPCOM 			= 	../../compiler/bin/i686-elf-g++
+ASM 			= 	../../compiler/bin/i686-elf-as
+ARCH			= 	../../compiler/bin/i686-elf-ar
+MAKEDEPEND		= 	makedepend 
 
 
-libstd.a: $(OBJ)
-	$(AR) $(ARFLAG) $(LIBAR) $(OBJ)
-	
-string.o: string.c
-	$(CCOM) string.c -o string.o $(CFLAG) 
+# Flags for building tools
+CFLAG   		= 	-c -std=gnu99 -ffreestanding -O2 -Wall -Wextra -I$(INC_DIR)
+CPPFLAG 		= 	-c -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -I$(INC_DIR)
+ARFLAG			= 	-vrcs	
 
-stdio.o: stdio.c
-	$(CCOM) stdio.c -o stdio.o $(CFLAG)
 
-string.c: $(INC)/string.h
+_SOURCE			=	string.c stdio.c
 
-stdio.c: $(INC)/stdio.h $(INC)/va_list.h $(INC)/stdarg.h $(INC)/string.h
+# Contain path to source files
+SRC_FILE 		=	$(_SOURCE:%.c=$(SRC_DIR)/%.c)
+
+# Output debug object file
+D_OBJ			=	$(_SOURCE:%.c=$(D_OBJ_DIR)/%.o)
+
+# Output release object file
+R_OBJ			=	$(_SOURCE:%.c=$(R_OBJ_DIR)/%.o)
+
+# Output dependency file
+DEP 			=	.depend
+
+#-------------------------------------------------------------------------
+
+lib: $(LIB_ARCH)
+
+$(LIB_ARCH): $(D_OBJ)
+	$(ARCH) $(ARFLAG) $(LIB_ARCH) $(D_OBJ)
+
+$(D_OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CCOM) $< -o $@ $(CFLAG)
+
+# Include dependency files for object files
+include $(DEP)
+
+# Clean object file
+clean:
+	rm $(D_OBJ_DIR)/*
+	rm $(LIB_ARCH)
+
+# Generate dependency for course and output to DEP file
+depend:
+	$(MAKEDEPEND) -v -f$(DEP) -Y$(INC_DIR) $(SRC_FILE)
+	rm $(DEP).bak
