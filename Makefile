@@ -5,7 +5,7 @@ HAL_DIR 		=	./core/hal
 
 
 # Output files
-KNAME 			= myos.bin
+KNAME 			= kernel.bin
 KERNEL 			= $(KER_DIR)/bin/$(KNAME)
 ISO 			= os32.iso
 
@@ -68,7 +68,10 @@ hal:
 stdlib:
 	cd $(LIB_DIR); make depend; make;
 
-
+# Setup directory and dependencies file for first run
+configure:
+	chmod +x initialise.sh
+	./initialise.sh
 #-------------------------------------------------------------------------
 
 
