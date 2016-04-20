@@ -19,11 +19,12 @@ void usefullStuff()
 {
 	initializeHal();
 
-	genInterrupt(0);
-	genInterrupt(7);
+	//genInterrupt(0);
+	//genInterrupt(7);
 
 	initializeHal();
 
+	printf("Hello World\n");
 }
 
 
