@@ -1,5 +1,5 @@
 # Basic Hybrid Kernel
-> Hybrid Kernel with minimal feature like interrupt handling, command line interface
+> Hybrid Kernel with minimal features like interrupt handling, command line interface
 
 GNU GRUB(GRand Unified Bootloader) legacy is used as bootloader
 
